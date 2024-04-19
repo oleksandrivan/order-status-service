@@ -23,7 +23,7 @@ jobs:
         run: ./gradlew test
 
       - name: Run Gradle dockerBuildNative
-        run: ./gradlew dockerBuildNative
+        run: ./gradlew dockerBuild
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
