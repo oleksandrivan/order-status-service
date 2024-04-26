@@ -25,7 +25,7 @@ abstract class AbstractIntegrationTest {
         @JvmStatic
         fun setup() {
             mySQLContainer.start()
-            System.setProperty("database.url", mySQLContainer.jdbcUrl)
+            System.setProperty("database.url", mySQLContainer.jdbcUrl.replace("jdbc", "r2dbc"))
             System.setProperty("database.username", mySQLContainer.username)
             System.setProperty("database.password", mySQLContainer.password)
         }

@@ -6,6 +6,9 @@ import com.uoc.jooq.tables.references.ORDER
 import com.uoc.jooq.tables.references.ORDERITEM
 import jakarta.inject.Singleton
 import org.jooq.DSLContext
+import org.jooq.Records
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 interface OrderRepository {
@@ -21,18 +24,19 @@ class OrderRepositoryImpl(
 ) : OrderRepository {
 
     override fun findOrder(orderId: OrderId): Result<Order> {
-        val items: List<OrderItem> = dslContext.select()
+
+
+        val items: Flux<OrderItem> = Flux.from(dslContext.select()
             .from(ORDERITEM)
-            .where(ORDERITEM.ORDERID.eq(orderId.value))
-            .fetch()
-            .map { record -> OrderItem(record.get(ORDERITEM.PRODUCTID)!!, record.get(ORDERITEM.QUANTITY)!!)}
-        val record = dslContext.select()
+            .where(ORDERITEM.ORDERID.eq(orderId.value)))
+            .map { record -> OrderItem(record.get(ORDERITEM.PRODUCTID)!!, record.get(ORDERITEM.QUANTITY)!!) }
+
+        val order = Mono.from(dslContext.select()
             .from(ORDER)
-            .where(ORDER.ID.eq(orderId.value))
-            .fetchAny()!!
-            .into(OrderRecord::class.java)
-            .map { it as OrderRecord }
-        return Result.success(record.toDomain(items))
+            .where(ORDER.ID.eq(orderId.value)))
+            .map { record -> record.into(OrderRecord::class.java) }
+
+        return Result.success(order.toDomain(items))
     }
 
 
@@ -75,16 +79,20 @@ class OrderRepositoryImpl(
 
     companion object{
 
-        private fun OrderRecord.toDomain(items: List<OrderItem>): Order {
-            return Order(
-                orderId = OrderId(this.id!!),
-                customerId = CustomerId(this.customerid!!),
-                items = items,
-                shippingAddress = AddressId(this.shippingaddress!!),
-                status = OrderStatus.valueOf(this.status!!.name),
-                createdAt = this.createdat!!,
-                updatedAt = this.updatedat!!
-            )
+        private fun Mono<OrderRecord>.toDomain(itemsFlux: Flux<OrderItem>): Order {
+            val record = this.block()!!
+            val items = itemsFlux.collectList().block()!!
+            return with(record){
+                Order(
+                    orderId = OrderId(id!!),
+                    customerId = CustomerId(customerid!!),
+                    items = items,
+                    shippingAddress = AddressId(shippingaddress!!),
+                    status = OrderStatus.valueOf(status!!.name),
+                    createdAt = createdat!!,
+                    updatedAt = updatedat!!
+                )
+            }
         }
     }
 }

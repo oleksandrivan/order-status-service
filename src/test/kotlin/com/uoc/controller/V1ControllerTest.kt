@@ -2,7 +2,6 @@ package com.uoc.controller
 
 import com.uoc.AbstractIntegrationTest
 import com.uoc.repository.OrderRepository
-import com.uoc.repository.RepositoryImplTest.Companion.order
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
@@ -15,15 +14,10 @@ class V1ControllerTest: AbstractIntegrationTest() {
     @Client("/")
     lateinit var client: HttpClient
 
-    @Inject
-    lateinit var orderRepository: OrderRepository
-
     @Test
     fun testGetOrderStatus() {
-        val order = order()
-        orderRepository.storeOrder(order)
 
-        val request = HttpRequest.GET<String>("/v1/orders/${order.orderId.value}/status")
+        val request = HttpRequest.GET<String>("/v1/orders/069738cb-adfe-4d28-964d-5bcb41d48943/status")
         val response = client.toBlocking().exchange(request, String::class.java)
 
         assert(response.status.code == 200)

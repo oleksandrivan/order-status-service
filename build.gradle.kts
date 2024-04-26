@@ -36,6 +36,7 @@ dependencies {
     implementation("io.micronaut.sql:micronaut-jooq")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    implementation("io.asyncer:r2dbc-mysql:1.1.0")
     runtimeOnly("ch.qos.logback:logback-classic")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
