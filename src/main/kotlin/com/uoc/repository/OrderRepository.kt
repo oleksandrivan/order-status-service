@@ -6,10 +6,7 @@ import com.uoc.jooq.tables.references.ORDER
 import com.uoc.jooq.tables.references.ORDERITEM
 import jakarta.inject.Singleton
 import org.jooq.DSLContext
-import org.jooq.SQLDialect
-import org.jooq.impl.DSL
 import java.time.LocalDateTime
-import javax.sql.DataSource
 
 interface OrderRepository {
 
@@ -20,10 +17,8 @@ interface OrderRepository {
 
 @Singleton
 class OrderRepositoryImpl(
-    dataSource: DataSource
+    private val dslContext: DSLContext
 ) : OrderRepository {
-
-    private var dslContext: DSLContext = DSL.using(dataSource, SQLDialect.MYSQL)
 
     override fun findOrder(orderId: OrderId): Result<Order> {
         val items: List<OrderItem> = dslContext.select()

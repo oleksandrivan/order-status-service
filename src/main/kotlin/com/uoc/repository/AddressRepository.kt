@@ -17,10 +17,8 @@ interface AddressRepository {
 
 @Singleton
 class AddressRepositoryImpl(
-    dataSource: DataSource
+    private val dslContext: DSLContext
 ): AddressRepository {
-
-    private var dslContext: DSLContext = DSL.using(dataSource, SQLDialect.MYSQL)
 
     override fun storeAddress(address: Address): Result<AddressId> {
         val executeResult = dslContext.insertInto(ADDRESS)

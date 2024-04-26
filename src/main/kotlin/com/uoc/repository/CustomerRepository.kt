@@ -15,10 +15,8 @@ interface CustomerRepository {
 
 @Singleton
 class CustomerRepositoryImpl(
-    dataSource: DataSource
+    private val dslContext: DSLContext
 ): CustomerRepository {
-
-    private var dslContext: DSLContext = DSL.using(dataSource, SQLDialect.MYSQL)
 
     override fun storeCustomer(customer: Customer): Result<CustomerId> {
         val executeResult = dslContext.insertInto(CUSTOMER)

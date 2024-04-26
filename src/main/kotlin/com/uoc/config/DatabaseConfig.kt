@@ -3,10 +3,11 @@ package com.uoc.config
 import com.mysql.cj.jdbc.MysqlDataSource
 import io.micronaut.context.annotation.Bean
 import io.micronaut.context.annotation.Factory
-import io.micronaut.context.annotation.Property
-import io.micronaut.context.annotation.Value
+import jakarta.inject.Singleton
+import org.jooq.DSLContext
+import org.jooq.SQLDialect
+import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
-import javax.sql.DataSource
 
 @Factory
 class DatabaseConfig(
@@ -16,7 +17,8 @@ class DatabaseConfig(
     private val log = LoggerFactory.getLogger(DatabaseConfig::class.java)
 
     @Bean
-    fun dataSource(): DataSource {
+    @Singleton
+    fun dslContext(): DSLContext {
         val dataSource = MysqlDataSource()
         val url: String = if(System.getProperty("database.url") != null) System.getProperty("database.url") else configReader.url
         val username: String = if(System.getProperty("database.username") != null) System.getProperty("database.username") else configReader.username
@@ -25,6 +27,6 @@ class DatabaseConfig(
         dataSource.user = username
         dataSource.password = password
         log.info("Database configuration: $url, $username, $password")
-        return dataSource
+        return DSL.using(dataSource, SQLDialect.MYSQL)
     }
 }
