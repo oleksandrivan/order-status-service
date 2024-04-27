@@ -17,11 +17,12 @@ class RepositoryImplTest : AbstractIntegrationTest() {
     fun when_getOrder_then_returnsOrderEntity() {
 
         val storedOrder = orderRepository.findOrder(OrderId("069738cb-adfe-4d28-964d-5bcb41d48943"))
-        assert(storedOrder.isSuccess)
-        storedOrder.onSuccess {
+        storedOrder.block()!!.let {
+            assert(it.orderId == OrderId("069738cb-adfe-4d28-964d-5bcb41d48943"))
+            assert(it.status == OrderStatus.CREATED)
+            assert(it.items.size == 2)
             assert(it.customerId == CustomerId(1))
             assert(it.shippingAddress == AddressId(1))
-            assert(it.items.size == 2)
         }
     }
 }
