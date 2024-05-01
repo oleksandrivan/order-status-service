@@ -1,7 +1,6 @@
 package com.uoc.controller
 
 import com.uoc.AbstractIntegrationTest
-import com.uoc.repository.OrderRepository
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client

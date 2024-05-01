@@ -26,7 +26,7 @@ class V1Controller(
     }
 
     companion object {
-        private fun <T, R> Mono<T>.fold(onSuccess: (T) -> R, onError: (Throwable) -> R): Mono<R> {
+        fun <T, R> Mono<T>.fold(onSuccess: (T) -> R, onError: (Throwable) -> R): Mono<R> {
             return this
                 .map(onSuccess)
                 .onErrorResume { error -> Mono.just(onError(error)!!) }
@@ -34,7 +34,7 @@ class V1Controller(
     }
 }
 
-private fun String.toDomain(): OrderId = OrderId(this)
+fun String.toDomain(): OrderId = OrderId(this)
 
 sealed class OrderStatusResponse
 data class OrderStatusSuccessResponse(val status: OrderStatus): OrderStatusResponse()

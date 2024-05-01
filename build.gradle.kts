@@ -42,6 +42,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:1.19.7")
     testImplementation("org.testcontainers:mysql:1.19.7")
     testImplementation("org.testcontainers:testcontainers:1.19.7")
+    testImplementation("org.wiremock:wiremock-standalone:3.0.4")
 }
 
 
@@ -108,5 +109,3 @@ fun execCmd(command: String): String {
     }
     return stdOut.toString().trim()
 }
-
-
